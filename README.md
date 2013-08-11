@@ -4,7 +4,7 @@ NodeChat
 Installing
 -------
 
-This application requires <code>node.js</code> (0.10 and up), if you don't have it yet, the latest stable version is a good choice to install.Then you must obtain a copy of the source code by the ZIP button or by the "git clone" method (recommended to facilitate updating).
+This application requires <code>node.js</code> (0.10.0 and up), if you don't have it yet, the latest stable version is a good choice to install.Then you must obtain a copy of the source code by the ZIP button or by the "git clone" method (recommended to facilitate updating).
 NodeChat is run using a command line. In Windows, open the <code>cmd</code>. In Mac OS, open <code>Terminal</code>. Type this into the command line:
 
 <code>cd LOCATION</code>
