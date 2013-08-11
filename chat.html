@@ -8,43 +8,79 @@
     <script type="text/javascript">
       //Scroll en bas
     </script>
-    <style type="text/css">
-    body {
-        background-color : rgb(50,50,80);
-        color : white;
-        /*text-align : center;*/
-    }
-    #tchat {
-        background-color : white;
-        opacity : 0.8;
-        margin-top:auto;
-        width : 1000px;
-        height : 750px;
-        float: right;
-        border : 3px rgb(40,40,40) solid;
-        overflow : auto;
-    }
-    #form1{
-        margin-bottom: 1px;
-    }
-    #line {
-        border-bottom : 1px rgb(80,80,80) solid;
-        padding : 4px;
-        text-align:left;
-        color : rgb(40,40,40);
-    }
-    </style>
-</head>
-<body>
-  <div id="tchat"></div>
-  <div = id="form1">
-  <form onsubmit="return (envoiMessage());">
-    <b>Message : </b><input type="text" required="required" name="message" id="message" style="width:250px;" /> <input type="submit" value="Envoyer"/>
-  </form>
-  </div>
-   <script type="text/javascript">
+<link rel="stylesheet" type="text/css" href="http://xx.xx.xx.xx/static/stylesheets/foundation.css">
+<script type="text/javascript">
   // We ask the id of user
   var pseudo = prompt('Votre pseudo ?') || 'Invité';
+</script>
+</head>
+<body style="height:100%; width:100%; position:fixed;">
+<div class="topbar">
+    <nav class="top-bar">
+      <ul class="title-area">
+        <li class="name"><h1><a href="#">nodeChat</a></h1></li>
+        <ul class="right">
+      <li class="divider hide-for-small"></li>
+      <li class="has-dropdown"><a href="#"><script>document.write(pseudo);</script></a>
+
+        <ul class="dropdown">
+          <li class="has-dropdown"><a href="#" class="">Fonctionnalité 1</a>
+          <li class="has-dropdown"><a href="#" class="">Fonctionnalité 2</a>
+          <li class="has-dropdown"><a href="#" class="">etc...</a>
+                </ul>
+      </ul>
+</nav>
+</div>
+<div class="limitleft" style="width:13%; height:97%; overflow:auto; float:left;">
+  <div class="contentleft">
+    <ul class="nav-bar vertical">
+      <li><a href="#">User 1</a></li>
+      <li><a href="#">User 2</a></li>
+      <li><a href="#">User 3</a></li>
+      <li><a href="#">User 4</a></li>
+      <li><a href="#">User 5</a></li>
+      <li><a href="#">User 6</a></li>
+      <li><a href="#">User 7</a></li>
+      <li><a href="#">User 8</a></li>
+      <li><a href="#">User 9</a></li>
+      <li><a href="#">User 10</a></li>
+      <li><a href="#">User 11</a></li>
+      <li><a href="#">User 12</a></li>
+      <li><a href="#">User 13</a></li>
+      <li><a href="#">User 14</a></li>
+      <li><a href="#">User 15</a></li>
+      <li><a href="#">User 16</a></li>
+      <li><a href="#">User 17</a></li>
+      <li><a href="#">User 18</a></li>
+      <li><a href="#">User 19</a></li>
+      <li><a href="#">User 20</a></li>
+      <li><a href="#">User 21</a></li>
+      <li><a href="#">User 22</a></li>
+      <li><a href="#">User 23</a></li>
+      <li><a href="#">User 24</a></li>
+    </ul>
+  </div>
+</div>
+    <div id="tchat" style="float:right; width:87%; height:90%; background-color:#e6e6e6;"></div>
+  <div class="contentbottom" style="float:right; width:87%; height:7%; background-color:#e6e6e6; border-top: solid 1px #CFCFCF;">
+    <form onsubmit="return (envoiMessage());">
+    <div class="row">
+    <div class="small-8">
+      <div class="row">
+        <div class="small-3 columns" style="width:7%; float:left;">
+          <label for="right-label" class="left inline"><b><script>document.write(pseudo);</script></b>:</label>
+        </div>
+        <div class="small-9 columns" style="width:85%;">
+          <input type="text" required="required" name="message" id="message" placeholder="Appuyez sur entrée pour envoyer" style="height:50%; margin-top:2px;" />
+          <input type="submit" value="Envoyer"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+  </div>
+  </div>
+   <script type="text/javascript">
   // We connect to the server
   var socket = io.connect();
   // We create the event recûprerMessage to get all messages in the server 
