@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chat</title>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+      //Scroll en bas
+    </script>
+    <style type="text/css">
+    body {
+        background-color : rgb(50,50,80);
+        color : white;
+        /*text-align : center;*/
+    }
+    #tchat {
+        background-color : white;
+        opacity : 0.8;
+        margin-top:auto;
+        width : 1000px;
+        height : 750px;
+        float: right;
+        border : 3px rgb(40,40,40) solid;
+        overflow : auto;
+    }
+    #form1{
+        margin-bottom: 1px;
+    }
+    #line {
+        border-bottom : 1px rgb(80,80,80) solid;
+        padding : 4px;
+        text-align:left;
+        color : rgb(40,40,40);
+    }
+    </style>
+</head>
+<body>
+  <div id="tchat"></div>
+  <div = id="form1">
+  <form onsubmit="return (envoiMessage());">
+    <b>Message : </b><input type="text" required="required" name="message" id="message" style="width:250px;" /> <input type="submit" value="Envoyer"/>
+  </form>
+  </div>
+   <script type="text/javascript">
+  // We ask the id of user
+  var pseudo = prompt('Votre pseudo ?') || 'Invité';
+  // We connect to the server
+  var socket = io.connect();
+  // We create the event recûprerMessage to get all messages in the server 
+  socket.on('recupererMessages', function (messages) {
+  // messages is the global variable in app.js
+  var html = '';
+  for (var i = 0; i < messages.length; i++)
+    html += '<div id="line"><b>'+messages[i].pseudo+'</b> : '+messages[i].message+'</div>';
+  document.getElementById('tchat').innerHTML = html;
+  });
+  // If someone post a message, the server send us his message with the event recupererNouveauMessage
+  socket.on('recupererNouveauMessage', function (message) {
+    document.getElementById('tchat').innerHTML += '<div id="line"><b>'+message.pseudo+'</b> : '+message.message+'</div>';
+  });
+  // When we want send a message
+  function envoiMessage(mess) {
+  // We get it
+  var message = document.getElementById('message').value;
+  // We call the event who is in the server so that record the message and that send at all clients (connected)
+  socket.emit('nouveauMessage', { 'pseudo' : pseudo, 'message' : message });
+    // We display directly the new message
+    document.getElementById('tchat').innerHTML += '<div id="line"><b>'+pseudo+'</b> : '+message+'</div>';
+    // We empty the form
+    document.getElementById('message').value = '';
+    // false = don't refresh
+    return false;
+    }
+  </script>
+</body>
+</html>
