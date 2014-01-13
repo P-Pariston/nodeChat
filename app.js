@@ -102,7 +102,7 @@ io.sockets.on('connection', function(socket){
 	/* Hour in the var current_hour, we send and
 	 * register it to the socket of the 'message'
 	 */	
-	 current_hour = getTime();
+	current_hour = getTime();
         if(mess.message.charAt(0) == "/"){
             var Command = require('./commands.js');
             var c = new Command();
