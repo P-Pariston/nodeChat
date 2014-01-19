@@ -60,16 +60,16 @@ function getTime() {
  * For example: myArray = unset(myArray, entry)
  */
  function unset(array, value){
-	var output=[];
+    var output=[];
     var index = array.indexOf(value)
     var j = 0;
-	for(var i in array){
-		if (i!=index){
-			output[j]=array[i];
-                j++;
-            }
-	}
-	return output;
+    for(var i in array){
+	if (i!=index){
+	output[j]=array[i];
+        j++;
+       }
+     }
+     return output;
 }
 
 var messages = [];
@@ -90,10 +90,10 @@ io.sockets.on('connection', function(socket){
     	socket.emit('userlist', users);
     	socket.broadcast.emit('userlist', users);
     socket.on('disconnect', function() {
-		socket.broadcast.emit('removeUsername', pseudo);
-		users = unset(users, pseudo);
-		socket.emit('userlist', users.pseudo);
-	    socket.broadcast.emit('userlist', users);
+	socket.broadcast.emit('removeUsername', pseudo);
+	users = unset(users, pseudo);
+	socket.emit('userlist', users.pseudo);
+	socket.broadcast.emit('userlist', users);
    		});
     }); 
     //Storing messages in the array messages
@@ -108,11 +108,11 @@ io.sockets.on('connection', function(socket){
             var c = new Command();
             c.hour(current_hour); 
         }
-		else{
-    		mess.hour = current_hour;
-    		messages.push(mess);
-    		socket.emit('getNewPosts', mess);	
-    		socket.broadcast.emit('getNewPosts', mess);	
+	else{
+    	mess.hour = current_hour;
+    	messages.push(mess);
+    	socket.emit('getNewPosts', mess);	
+    	socket.broadcast.emit('getNewPosts', mess);	
 		}	
 	});
 })
