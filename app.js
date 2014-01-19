@@ -84,11 +84,11 @@ io.sockets.on('connection', function(socket){
 	 * Storing logins in the array 'users'
 	 */
     socket.on('username', function (pseudo) {
-    users.push(pseudo);
-    socket.emit('addUsername', pseudo);
-    socket.broadcast.emit('addUsername', pseudo);	
-    socket.emit('userlist', users);
-    socket.broadcast.emit('userlist', users);
+    	users.push(pseudo);
+    	socket.emit('addUsername', pseudo);
+    	socket.broadcast.emit('addUsername', pseudo);	
+    	socket.emit('userlist', users);
+    	socket.broadcast.emit('userlist', users);
     socket.on('disconnect', function() {
 	socket.broadcast.emit('removeUsername', pseudo);
 	users = unset(users, pseudo);
