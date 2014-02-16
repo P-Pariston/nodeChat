@@ -3,13 +3,17 @@
  * You can add or remove any command here.
  */
 
-module.exports;
-
-module.exports = function() {
-
-    this.hour = function(current_hour) {
-        console.log(current_hour);
-        //socket.emit('command', current_hour);
-    };
-
+var commands = exports.commands = {
+  version: function(){
+    console.log('nodeChat version: '+ VERSION);
+    return VERSION;
+  },
+  ban: function(target){
+    console.log('User '+target+ ' was banned.');
+    return 'User '+target+ ' was banned.';
+  },
+  kick: function(target){
+    console.log('User '+target+ ' was kicked.');
+    return 'User '+target+ ' was kicked.';
+  }
 };
