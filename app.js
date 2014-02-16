@@ -1,4 +1,16 @@
+//Config file
 require('./config/config.js');
+
+/* 
+ * Command system
+ * Something like: commands.myCommand();
+ */
+var commands = exports.commands = require('./commands.js').commands;
+
+//nodeChat version
+commands.version();
+
+//Dependencies
 var express = require('express')
     ,app = express()
     ,http = require('http')
@@ -7,10 +19,10 @@ var express = require('express')
     ,url = require('url')
     ,MongoClient = require('mongodb').MongoClient
     ,format = require('util').format;
+
 /*
  * Listening application (socket.io)
  */
-
 var io = io.listen(server);
 
 /*
@@ -32,14 +44,14 @@ app.get('/', function (req, res) {
  * Listening port
  */
 server.listen(PORT,  function(){
-	console.log('Server started at http://localhost/ with the port ' + PORT);
+	console.log('Server started at http://localhost:' + PORT);
 });
 
 /*
  * Function to get the hour.
  * Will be transfered by sockets
  */
-function getTime() {
+function getTime(){
 
     var date = new Date();
     var hour = date.getHours();
@@ -55,31 +67,69 @@ function getTime() {
     day = (day < 10 ? "0" : "") + day;
     return "["+hour + ":" + min + ":" + sec+"]";
 }
+
 /*
- * This delete a pseudo in the array
+ * This function delete a pseudo in the array
  * For example: myArray = unset(myArray, entry)
  */
+
  function unset(array, value){
-    var output=[];
+	var output=[];
     var index = array.indexOf(value)
     var j = 0;
-    for(var i in array){
-	if (i!=index){
-	output[j]=array[i];
-        j++;
-       }
-     }
-     return output;
+	for(var i in array){
+		if (i!=index){
+			output[j]=array[i];
+                j++;
+            }
+	}
+	return output;
 }
 
 var messages = [];
 
 var users = [];
 
+var User = (function(){
+
+})
+
+    /*
+     * To send a reply
+     */
+
+User.prototype.sendReply = function(reply){
+    io.sockets.on('connection', function(socket){
+        socket.emit('reply', reply);
+    });
+};
+
+var User = new User();
+
 // If someone is connecting
 io.sockets.on('connection', function(socket){
+    /******** SYSTEM COMMAND (DEV) ************/
+    var Command = (function(){
+        //----
+    });
+    Command.prototype.parser = function(c, username){
+        console.log('Executing command '+c+'...');
+        switch (c) {
+            case '/ban':
+            socket.emit('reply', commands.ban(username));
+            break;
+            case '/kick':
+            socket.emit('reply', commands.kick(username));
+            break;
+            default:
+            socket.emit('reply', 'Invalid command.');            
+        }
+    }
+    var Command = new Command();
+    /******** SYSTEM COMMAND (DEV) ************/
     //1: connected to the server
     socket.emit('connected', '1');
+
 	/* Connection/disconnection of the user
 	 * Storing logins in the array 'users'
 	 */
@@ -90,30 +140,32 @@ io.sockets.on('connection', function(socket){
     	socket.emit('userlist', users);
     	socket.broadcast.emit('userlist', users);
     socket.on('disconnect', function() {
-	socket.broadcast.emit('removeUsername', pseudo);
-	users = unset(users, pseudo);
-	socket.emit('userlist', users.pseudo);
-	socket.broadcast.emit('userlist', users);
+		socket.broadcast.emit('removeUsername', pseudo);
+		users = unset(users, pseudo);
+		socket.emit('userlist', users.pseudo);
+	    socket.broadcast.emit('userlist', users);
    		});
     }); 
     //Storing messages in the array messages
 	socket.emit('getPosts', messages);
 	socket.on('newPost', function (mess){
-	/* Hour in the var current_hour, we send and
-	 * register it to the socket of the 'message'
-	 */	
 	current_hour = getTime();
-        if(mess.message.charAt(0) == "/"){
-            var Command = require('./commands.js');
-            var c = new Command();
-            c.hour(current_hour); 
-        }
-	else{
+     if(mess.message.charAt(0) == "/"){
+        c = mess.message; 
+        /*
+         * Spliting command for the commands kick or ban:
+         * Example: c[0] = '/ban' and c[1] = 'userid'.
+         */
+        c = c.split(' '); 
+        Command.parser(c[0], c[1]);
+        }else{
     	mess.hour = current_hour;
     	messages.push(mess);
     	socket.emit('getNewPosts', mess);	
-    	socket.broadcast.emit('getNewPosts', mess);	
-		}	
+    	socket.broadcast.emit('getNewPosts', mess);		
+    }
 	});
 })
 
+User.sendReply('Connected !');
+User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork it <a href="https://github.com/P-Pariston/">here</a>');
