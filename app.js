@@ -168,4 +168,4 @@ io.sockets.on('connection', function(socket){
 })
 
 User.sendReply('Connected !');
-User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork it <a href="https://github.com/P-Pariston/">here</a>');
+User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork me on<a href="https://github.com/P-Pariston/">github !</a>');
