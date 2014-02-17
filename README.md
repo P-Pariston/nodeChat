@@ -18,3 +18,8 @@ Congratulations, you're done setting up nodeChat. Now you can start the applicat
 <code>node app.js</code>
 
 You can check your server at: <code>http://SERVER:8000/</code>, SERVER is localhost or the IP adress of the server. 
+
+License
+=======
+
+nodeChat's server is distributed under the terms of the MIT License.
