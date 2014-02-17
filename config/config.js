@@ -6,3 +6,5 @@
  * informations (IP, domain name and port).
  */
 PORT = 8000;
+
+VERSION = "0.1.0";
