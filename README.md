@@ -25,9 +25,7 @@ Browser support
 nodeChat currently supports, in order of preference:
 
 -Chrome
-
 -Firefox
-
 -Safari
 
 
