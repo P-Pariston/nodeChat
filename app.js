@@ -102,7 +102,7 @@ var User = new User();
 
 // If someone is connecting
 io.sockets.on('connection', function(socket){
-    /******** SYSTEM COMMAND (DEV) ************/
+    /******** COMMAND SYSTEM (DEV) ************/
     var Command = (function(){
         //----
     });
