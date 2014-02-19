@@ -1,6 +1,8 @@
 NodeChat (in development)
 =============
 
+http://nodechat.fr/
+
 Installing
 -------
 
