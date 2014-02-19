@@ -1,14 +1,8 @@
 //Config file
 require('./config/config.js');
 
-/* 
- * Command system
- * Something like: commands.myCommand();
- */
-var commands = exports.commands = require('./commands.js').commands;
-
 //nodeChat version
-commands.version();
+console.log('nodeChat version: '+VERSION)
 
 //Dependencies
 var express = require('express')
@@ -69,7 +63,7 @@ function getTime(){
 }
 
 /*
- * This function removes a pseudo in the array
+ * This function delete a pseudo in the array
  * For example: myArray = unset(myArray, entry)
  */
 
@@ -112,14 +106,48 @@ io.sockets.on('connection', function(socket){
     var Command = (function(){
         //----
     });
-    Command.prototype.parser = function(c, username){
-        console.log('Executing command '+c+'...');
+    Command.prototype.parser = function(c, c2, c3, c4){
+        console.log('Executing command '+c+' (eventually with these args:'+c2+', '+c3+', '+c4);
         switch (c) {
+            case '/hour': 
+            socket.emit('reply', current_hour);
+            break;
+			case '/version':
+            socket.emit('reply', 'nodeChat v'+VERSION);
+            break;
             case '/ban':
-            socket.emit('reply', commands.ban(username));
+             /*
+             *Code of '/ban' here
+             */
+            socket.emit('reply', 'User '+c2+' was banned.');
             break;
             case '/kick':
-            socket.emit('reply', commands.kick(username));
+            /*
+             *Code of '/kick' here
+             */
+            socket.emit('reply', 'User '+c2+' was kicked.');
+            break;
+            case '/register':
+            MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+             if(err) throw err;
+                var collection = db.collection('nodechat');
+                /*
+                 * Rank: 4 - Normal user | 3 - Voiced
+                 *       2 - Moderator   | 1 - Admin
+                 */
+                collection.insert({username: c2, password: c3, rank: 4}, function(err, docs) {
+                db.close();
+                });
+              })
+            break;
+            case '/login':
+            if(typeof c2 != "undefined" && typeof c3 != "undefined"){
+	            //Login code...
+	            
+	            socket.emit('reply', 'Successfully connected with the username: '+c2+' and the password: '+c3);
+        	}else{
+        		socket.emit('reply', 'Wrong username/password combinaison.');
+        	}
             break;
             default:
             socket.emit('reply', 'Invalid command.');            
@@ -134,6 +162,7 @@ io.sockets.on('connection', function(socket){
 	 * Storing logins in the array 'users'
 	 */
     socket.on('username', function (pseudo) {
+    	server_username = pseudo; //To prevent changing nickname from the client
     	users.push(pseudo);
     	socket.emit('addUsername', pseudo);
     	socket.broadcast.emit('addUsername', pseudo);	
@@ -154,18 +183,24 @@ io.sockets.on('connection', function(socket){
         c = mess.message; 
         /*
          * Spliting command for the commands kick or ban:
-         * Example: c[0] = '/ban' and c[1] = 'userid'.
+         * Example: c[0] is the command: '/ban' 
+         * Others arguments are: c[1], c[2] and c[3]
          */
         c = c.split(' '); 
-        Command.parser(c[0], c[1]);
-        }else{
+        Command.parser(c[0], c[1], c[2], c[3]);
+	    }else if(mess.pseudo.substring(0,5) === "Guest"){
+	    	//Guests cannot talk
+	    	socket.emit('reply', 'You are connected as a guest and you cannot talk in this chat.')
+	    }
+        else{
+        mess.pseudo = server_username;
     	mess.hour = current_hour;
     	messages.push(mess);
     	socket.emit('getNewPosts', mess);	
     	socket.broadcast.emit('getNewPosts', mess);		
-    }
+    	}
 	});
 })
 
 User.sendReply('Connected !');
-User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork me on <a href="https://github.com/P-Pariston/">github !</a>');
+User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork me on <a href="https://github.com/P-Pariston/">github</a>.');
