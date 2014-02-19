@@ -25,12 +25,14 @@ Browser support
 nodeChat currently supports, in order of preference:
 
 -Chrome
+
 -Firefox
+
 -Safari
 
 
 License
-=======
+========
 
 nodeChat's server is distributed under the terms of the MIT License.
 
