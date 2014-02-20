@@ -169,11 +169,11 @@ io.sockets.on('connection', function(socket){
     	socket.emit('userlist', users);
     	socket.broadcast.emit('userlist', users);
     socket.on('disconnect', function() {
-		socket.broadcast.emit('removeUsername', pseudo);
-		users = unset(users, pseudo);
-		socket.emit('userlist', users.pseudo);
-	    socket.broadcast.emit('userlist', users);
-   		});
+	socket.broadcast.emit('removeUsername', pseudo);
+	users = unset(users, pseudo);
+	socket.emit('userlist', users.pseudo);
+	socket.broadcast.emit('userlist', users);
+   	});
     }); 
     //Storing messages in the array messages
 	socket.emit('getPosts', messages);
