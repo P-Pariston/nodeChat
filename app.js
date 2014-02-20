@@ -112,7 +112,7 @@ io.sockets.on('connection', function(socket){
             case '/hour': 
             socket.emit('reply', current_hour);
             break;
-			case '/version':
+	    case '/version':
             socket.emit('reply', 'nodeChat v'+VERSION);
             break;
             case '/ban':
