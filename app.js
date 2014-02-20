@@ -32,7 +32,7 @@ app.configure(function(){
  */
 app.get('/', function (req, res) {
   res.write('Please put the client\'s files in the same directory as the server. \n');
-  res.end('Otherwise, please execute the file called index.html in the client.')
+  res.end('Otherwise, please execute directly the file called index.html in the client.')
 });
 
 /*
