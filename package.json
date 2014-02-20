@@ -1,6 +1,6 @@
 {
     "name": "nodechat",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "private": true,
     "dependencies": {
       "socket.io": "~0.9.6",
@@ -12,6 +12,6 @@
   },
           "author": {
                 "name": "P-Pariston",
-                "email": "soon"
+                "email": "kdaoussi@hotmail.fr"
         }
 }
