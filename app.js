@@ -1,4 +1,4 @@
-    //Config file
+//Config file
 require('./config/config.js');
 
 //nodeChat version
