@@ -1,4 +1,4 @@
-//Config file
+    //Config file
 require('./config/config.js');
 
 //nodeChat version
@@ -102,7 +102,7 @@ var User = new User();
 
 // If someone is connecting
 io.sockets.on('connection', function(socket){
-    /******** COMMAND SYSTEM (DEV) ************/
+    /******** SYSTEM COMMAND (DEV) ************/
     var Command = (function(){
         //----
     });
