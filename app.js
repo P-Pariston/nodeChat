@@ -31,7 +31,8 @@ app.configure(function(){
  * App routes
  */
 app.get('/', function (req, res) {
-  res.end('How are ya ? xd');
+  res.write('Please put the client\'s files in the same directory as the server. <br/>');
+  res.end('Otherwise, please execute the file called index.html in the client.')
 });
 
 /*
