@@ -152,7 +152,7 @@ io.sockets.on('connection', function(socket){
 	   /*##########################################################*/
 	   /*################WARNING THERE IS A CRASH HERE#############*/
 	   /*################IF YOU DON'T RESPECT CAPS IN##############*/
-	   /*################THE USERNAME, I'LL CORRECT IT SOON########*/
+	   /*################THE USERNAME, I'LL FIX IT SOON########*/
 	   /*##########################################################*/
 	    MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
              if(err) throw err;
