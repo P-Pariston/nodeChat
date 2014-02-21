@@ -199,11 +199,11 @@ Post.prototype.username = function(username){
 	socket.emit('userlist', users);
 	socket.broadcast.emit('userlist', users);
 }
-Post.prototype.disconnect = function(username){
-	socket.broadcast.emit('removeUsername', username);
-	users = unset(users, username);
+Post.prototype.disconnect = function(pseudo){
+	socket.broadcast.emit('removeUsername', pseudo);
+	users = unset(users, pseudo);
 	socket.emit('userlist', users.pseudo);
-	socket.broadcast.emit('userlist', username);
+	socket.broadcast.emit('userlist', users);
 }
 var Post = new Post();
 var Command = new Command();
@@ -212,10 +212,7 @@ socket.on('username', function (pseudo) {
 	server_username = pseudo; //To prevent changing nickname from the client
 	Post.username(server_username);
 socket.on('disconnect', function() {
-	socket.broadcast.emit('removeUsername', pseudo);
-	users = unset(users, pseudo);
-	socket.emit('userlist', users.pseudo);
-	socket.broadcast.emit('userlist', users);
+	Post.disconnect(pseudo);
 	});
 }); 
 
