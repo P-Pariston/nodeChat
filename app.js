@@ -138,7 +138,7 @@ io.sockets.on('connection', function(socket){
                  *       4 - Normal user | 3 - Voiced
                  *       2 - Moderator   | 1 - Admin
                  */
-                collection.insert({username: c2, password: c3, rank: 4}, function(err, docs) {
+	            collection.insert({username: c2.toLowerCase(), password: c3, rank: 4}, function(err, docs) {
                 db.close();
                 });
               })
@@ -149,12 +149,8 @@ io.sockets.on('connection', function(socket){
             break;
             case '/login':
             if(typeof c2 != "undefined" && typeof c3 != "undefined"){
-	   /*##########################################################*/
-	   /*################WARNING THERE IS A CRASH HERE#############*/
-	   /*################IF YOU DON'T RESPECT CAPS IN##############*/
-	   /*################THE USERNAME, I'LL FIX IT SOON########*/
-	   /*##########################################################*/
-	    MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+	        //Login code...
+	        MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
              if(err) throw err;
                 var collection = db.collection('nodechat');
                 /*
@@ -171,7 +167,7 @@ io.sockets.on('connection', function(socket){
                 });
               })
         	}else{
-        		socket.emit('reply', 'Wrong username/password combinaison.');
+        		socket.emit('reply', 'Invalid arguments.');
         	}
             break;
             case '/nick':
@@ -210,9 +206,9 @@ io.sockets.on('connection', function(socket){
      if(mess.message.charAt(0) == "/"){
         c = mess.message; 
         /*
-         * Spliting command for the commands kick or ban:
+         * Spliting string for some commands:
          * Example: c[0] is the command: '/ban' 
-         * Others arguments are: c[1], c[2] and c[3]
+         * c[1], c[2] and c[3] are the arguments
          */
         c = c.split(' '); 
         Command.parser(c[0], c[1], c[2], c[3]);
