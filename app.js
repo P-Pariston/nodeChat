@@ -149,8 +149,12 @@ io.sockets.on('connection', function(socket){
             break;
             case '/login':
             if(typeof c2 != "undefined" && typeof c3 != "undefined"){
-	        //Login code...
-	        MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+	   /*##########################################################*/
+	   /*################WARNING THERE IS A CRASH HERE#############*/
+	   /*################IF YOU DON'T RESPECT CAPS IN##############*/
+	   /*################THE USERNAME, I'LL CORRECT IT SOON########*/
+	   /*##########################################################*/
+	    MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
              if(err) throw err;
                 var collection = db.collection('nodechat');
                 /*
