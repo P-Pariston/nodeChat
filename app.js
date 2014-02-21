@@ -129,26 +129,49 @@ io.sockets.on('connection', function(socket){
             socket.emit('reply', 'User '+c2+' was kicked.');
             break;
             case '/register':
+            if(typeof c2 != "undefined" && typeof c3 != "undefined"){
             MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
              if(err) throw err;
                 var collection = db.collection('nodechat');
                 /*
-                 * Rank: 4 - Normal user | 3 - Voiced
+                 * Rank: 6 - Muted/banned| 5 - Guest
+                 *       4 - Normal user | 3 - Voiced
                  *       2 - Moderator   | 1 - Admin
                  */
                 collection.insert({username: c2, password: c3, rank: 4}, function(err, docs) {
                 db.close();
                 });
               })
+            socket.emit('reply', 'Successfully registered')
+        	}else{
+        		socket.emit('reply', 'Invalid arguments.');
+        	}
             break;
             case '/login':
             if(typeof c2 != "undefined" && typeof c3 != "undefined"){
-	            //Login code...
-	            
-	            socket.emit('reply', 'Successfully connected with the username: '+c2+' and the password: '+c3);
+	        //Login code...
+	        MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+             if(err) throw err;
+                var collection = db.collection('nodechat');
+                /*
+                 * c2 = username
+                 * c3 = password
+                 */
+                collection.findOne({username: c2}, function(err, docs) {
+                    if(c3 == docs.password){
+                        socket.emit('reply', 'Right password !');
+                    }else{
+                        socket.emit('reply', 'Wrong password.');
+                    }
+	                db.close();
+                });
+              })
         	}else{
         		socket.emit('reply', 'Wrong username/password combinaison.');
         	}
+            break;
+            case '/nick':
+            //rename command
             break;
             default:
             socket.emit('reply', 'Invalid command.');            
