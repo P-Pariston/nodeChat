@@ -209,8 +209,7 @@ var Post = new Post();
 var Command = new Command();
 
 socket.on('username', function (pseudo) {
-	server_username = pseudo; //To prevent changing nickname from the client
-	Post.username(server_username);
+	Post.username(pseudo);
 socket.on('disconnect', function() {
 	Post.disconnect(pseudo);
 	});
@@ -235,7 +234,7 @@ current_hour = getTime();
     	socket.emit('reply', 'You are connected as a guest and you cannot talk in this chat.')
     }
     else{
-	Post.newPosts(server_username, mess ,current_hour);		
+	Post.newPosts(mess.pseudo, mess ,current_hour);		
 	}
 });
 })
