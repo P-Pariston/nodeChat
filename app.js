@@ -64,7 +64,7 @@ return "["+hour + ":" + min + ":" + sec+"]";
 }
 
 /*
-* This function delete a pseudo in the array
+* This function removes a pseudo in the array
 * For example: myArray = unset(myArray, entry)
 */
 
