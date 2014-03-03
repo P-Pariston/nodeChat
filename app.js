@@ -168,9 +168,8 @@ Command.prototype.parser = function(c, c2, c3, c4){
                      * c3 = password
                      */
                     collection.findOne({username: c2.toLowerCase()}, function(err, result) {
-                        console.log(result.password);
                         if(result == null){
-                            socket.emit('reply', 'Bad request.');
+                            socket.emit('reply', 'User '+c2+' doesn\'t exist.');
                         }else if(c3 == result.password){
                             socket.emit('reply', 'Right password.');                            
                         }else{
