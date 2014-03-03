@@ -194,19 +194,29 @@ Command.prototype.parser = function(c, c2, c3, c4){
 Post.prototype.newPosts = function(username, mess, hour){
     mess.pseudo = username;
     mess.hour = hour;
-    messages.push(mess);
-    socket.emit('getNewPosts', mess);   
-    socket.broadcast.emit('getNewPosts', mess);
+    //Max message length = 300 chars.
+    if(mess.message.length >= 300){
+        socket.emit('reply', 'Your message is too long. ( '+mess.message.length+' chars, and max is 300)');
+    }else{
+        messages.push(mess);
+        socket.emit('getNewPosts', mess);   
+        socket.broadcast.emit('getNewPosts', mess);
+    }
 }
 Post.prototype.displayMessages = function(messages){
     socket.emit('getPosts', messages);
 }
 Post.prototype.username = function(username){
+    if(username.length >=11){
+        socket.emit('reply', 'Your name is too long. ( '+username.length+' chars, and max is 11)');
+        socket.emit('BadName', '1');
+    }else{
     users.push(username);
     socket.emit('addUsername', username);
     socket.broadcast.emit('addUsername', username); 
     socket.emit('userlist', users);
     socket.broadcast.emit('userlist', users);
+    }
 }
 Post.prototype.disconnect = function(pseudo){
     socket.broadcast.emit('removeUsername', pseudo);
