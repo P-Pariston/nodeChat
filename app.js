@@ -73,8 +73,8 @@ var output=[];
 var index = array.indexOf(value)
 var j = 0;
 for(var i in array){
-	if (i!=index){
-		output[j]=array[i];
+    if (i!=index){
+        output[j]=array[i];
             j++;
         }
 }
@@ -103,15 +103,15 @@ var User = new User();
 
 // If someone is connecting
 io.sockets.on('connection', function(socket){
-	//1: connected to the server
-	socket.emit('connected', '1');
-/******** SYSTEM COMMAND (DEV) ************/
+    //1: connected to the server
+    socket.emit('connected', '1');
+/******** COMMAND SYSTEM (DEV) ************/
 var Command = (function(){
 });
 var Post = (function(){
 });
 Command.prototype.parser = function(c, c2, c3, c4){
-    console.log('Executing command '+c+' (eventually with these args:'+c2+', '+c3+', '+c4);
+    console.log('DEBUG: Executing command '+c+' (eventually with these args:'+c2+', '+c3+', '+c4);
     switch (c) {
         case '/hour': 
         socket.emit('reply', current_hour);
@@ -141,37 +141,47 @@ Command.prototype.parser = function(c, c2, c3, c4){
              *       4 - Normal user | 3 - Voiced
              *       2 - Moderator   | 1 - Admin
              */
-            collection.insert({username: c2.toLowerCase(), password: c3, rank: 4}, function(err, docs) {
-            db.close();
+            var collection = db.collection('nodechat');
+            collection.findOne({username: c2.toLowerCase()}, function(err, result){
+                if(result == null){
+                    collection.insert({username: c2.toLowerCase(), password: c3, rank:4}, function(err, result){
+                        socket.emit('reply', 'Successfully registered.');
+                    });
+                    db.close();
+                }else{
+                    socket.emit('reply', 'Name taken.');
+                }
             });
-          })
-        socket.emit('reply', 'Successfully registered')
-    	}else{
-    		socket.emit('reply', 'Invalid arguments.');
-    	}
+        });
+        }else{
+            socket.emit('reply', 'Invalid arguments.');
+        }
         break;
         case '/login':
-        if(typeof c2 != "undefined" && typeof c3 != "undefined"){
-        //Login code...
-        MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
-         if(err) throw err;
-            var collection = db.collection('nodechat');
-            /*
-             * c2 = username
-             * c3 = password
-             */
-            collection.findOne({username: c2}, function(err, docs) {
-                if(c3 == docs.password){
-                    socket.emit('reply', 'Right password !');
+         if(typeof c2 != "undefined" && typeof c3 != "undefined"){
+                //Login code...
+                MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+                 if(err) throw err;
+                    var collection = db.collection('nodechat');
+                    /*
+                     * c2 = username
+                     * c3 = password
+                     */
+                    collection.findOne({username: c2.toLowerCase()}, function(err, result) {
+                        console.log(result.password);
+                        if(result == null){
+                            socket.emit('reply', 'Bad request.');
+                        }else if(c3 == result.password){
+                            socket.emit('reply', 'Right password.');                            
+                        }else{
+                            socket.emit('reply', 'Wrong password.');                            
+                        }
+                        db.close();
+                    });
+                  })
                 }else{
-                    socket.emit('reply', 'Wrong password.');
+                    socket.emit('reply', 'Invalid arguments.');
                 }
-                db.close();
-            });
-          })
-    	}else{
-    		socket.emit('reply', 'Invalid arguments.');
-    	}
         break;
         case '/nick':
         //rename command
@@ -180,39 +190,39 @@ Command.prototype.parser = function(c, c2, c3, c4){
         socket.emit('reply', 'Invalid command.');            
     }
 }
-/******** SYSTEM COMMAND (DEV) ************/
+/******** COMMAND SYSTEM (DEV) ************/
 
 Post.prototype.newPosts = function(username, mess, hour){
-	mess.pseudo = username;
-	mess.hour = hour;
-	messages.push(mess);
-	socket.emit('getNewPosts', mess);	
-	socket.broadcast.emit('getNewPosts', mess);
+    mess.pseudo = username;
+    mess.hour = hour;
+    messages.push(mess);
+    socket.emit('getNewPosts', mess);   
+    socket.broadcast.emit('getNewPosts', mess);
 }
 Post.prototype.displayMessages = function(messages){
-	socket.emit('getPosts', messages);
+    socket.emit('getPosts', messages);
 }
 Post.prototype.username = function(username){
-	users.push(username);
-	socket.emit('addUsername', username);
-	socket.broadcast.emit('addUsername', username);	
-	socket.emit('userlist', users);
-	socket.broadcast.emit('userlist', users);
+    users.push(username);
+    socket.emit('addUsername', username);
+    socket.broadcast.emit('addUsername', username); 
+    socket.emit('userlist', users);
+    socket.broadcast.emit('userlist', users);
 }
 Post.prototype.disconnect = function(pseudo){
-	socket.broadcast.emit('removeUsername', pseudo);
-	users = unset(users, pseudo);
-	socket.emit('userlist', users.pseudo);
-	socket.broadcast.emit('userlist', users);
+    socket.broadcast.emit('removeUsername', pseudo);
+    users = unset(users, pseudo);
+    socket.emit('userlist', users.pseudo);
+    socket.broadcast.emit('userlist', users);
 }
 var Post = new Post();
 var Command = new Command();
 
 socket.on('username', function (pseudo) {
-	Post.username(pseudo);
+    Post.username(pseudo);
 socket.on('disconnect', function() {
-	Post.disconnect(pseudo);
-	});
+    Post.disconnect(pseudo);
+    });
 }); 
 
 //To send all messages of the array to the client.
@@ -230,14 +240,14 @@ current_hour = getTime();
     c = c.split(' '); 
     Command.parser(c[0], c[1], c[2], c[3]);
     }else if(mess.pseudo.substring(0,5) === "Guest"){
-    	//Guests cannot talk
-    	socket.emit('reply', 'You are connected as a guest and you cannot talk in this chat.')
+        //Guests cannot talk
+        socket.emit('reply', 'You are connected as a guest and you cannot talk in this chat.')
     }
     else{
-	Post.newPosts(mess.pseudo, mess ,current_hour);		
-	}
+    Post.newPosts(mess.pseudo, mess ,current_hour);     
+    }
 });
 })
 
 User.sendReply('Connected !');
-User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork me on <a href="https://github.com/P-Pariston/">github</a>.');
+User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork me on <a href="https://github.com/P-Pariston/" target="_blank">github</a>.');
