@@ -10,8 +10,8 @@
   "engines": {
     "node": "0.10.x"
   },
-          "author": {
-                "name": "DAOUSSI Kassem",
-                "email": "kdaoussi@hotmail.fr"
-        }
+  "author": {
+    "name": "DAOUSSI Kassem",
+    "email": "kdaoussi@hotmail.fr"
+  }
 }
