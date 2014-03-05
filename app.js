@@ -24,15 +24,14 @@ var io = io.listen(server);
 */
 app.configure(function(){
 app.use(express.bodyParser());
-app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/static'));
 });
 
 /*
 * App routes
 */
 app.get('/', function (req, res) {
-res.write('Please put the client\'s files in the same directory as the server. \n');
-res.end('Otherwise, please execute directly the file called index.html in the client.')
+res.end('This is a nodeChat server.')
 });
 
 /*
