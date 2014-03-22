@@ -24,7 +24,7 @@ var io = io.listen(server);
 */
 app.configure(function(){
 app.use(express.bodyParser());
-app.use(express.static(__dirname + 'static'));
+app.use(express.static(__dirname + ''));
 });
 
 /*
@@ -172,11 +172,11 @@ Command.prototype.parser = function(c, c2, c3, c4){
                         }else if(c3 == result.password){
                             socket.emit('reply', 'Right password.');
                             users.push(c2);
-			    socket.emit('addUsername', c2);
-			    socket.broadcast.emit('addUsername', c2); 
-			    socket.emit('userlist', users);
-			    socket.broadcast.emit('userlist', users);
-			    socket.emit('isLogged', '1');                            
+						    socket.emit('addUsername', c2);
+						    socket.broadcast.emit('addUsername', c2); 
+						    socket.emit('userlist', users);
+						    socket.broadcast.emit('userlist', users);
+						    socket.emit('isLogged', '1');                            
                         }else{
                             socket.emit('reply', 'Wrong id/password combinaison.'); 
                             socket.emit('isLogged', '0');
@@ -208,7 +208,8 @@ Post.prototype.newPosts = function(username, mess, hour, pw){
     /*
      * Here is the checking of the identity.
      * If someone has changed his name from the client,
-     * we can return to him an error.
+     * we can return to him an error. This verification is
+     * made for each post.
      */
 	if(typeof mess.pseudo != "undefined" && typeof mess.pw != "undefined"){
 	    MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
@@ -218,13 +219,15 @@ Post.prototype.newPosts = function(username, mess, hour, pw){
 	            if(result == null){
 	            	socket.emit('reply', 'Error');
 	                socket.emit('isLogged', '-1');
+	                socket.emit('refresh', '1');
 	            }else if(mess.pw == result.password){
-			messages.push(mess);
-			socket.emit('getNewPosts', mess);   
-			socket.broadcast.emit('getNewPosts', mess);           
+			        messages.push(mess);
+			        socket.emit('getNewPosts', mess);   
+			        socket.broadcast.emit('getNewPosts', mess);           
 	            }else{
 	            	socket.emit('reply', 'Error');
 	                socket.emit('isLogged', '0');
+	                socket.emit('refresh', '1');
 	            }
 	            db.close();
 	        });
@@ -232,6 +235,7 @@ Post.prototype.newPosts = function(username, mess, hour, pw){
 	    }else{
 	        socket.emit('reply', 'Error');
 	        socket.emit('isLogged', '0');
+	        socket.emit('refresh', '1');
 	    }
         /**************************************/
     }
@@ -240,8 +244,8 @@ Post.prototype.displayMessages = function(messages){
     socket.emit('getPosts', messages);
 }
 Post.prototype.username = function(username){
-    if(username.length >=11){
-        socket.emit('reply', 'Your name is too long. ( '+username.length+' chars, and max is 11). Please choose another name.');
+    if(username.length >=13){
+        socket.emit('reply', 'Your name is too long. ( '+username.length+' chars, and max is 13). Please choose another name.');
         socket.emit('BadName', '1');
     }
 }
@@ -271,7 +275,7 @@ current_hour = getTime();
     /*
      * Spliting string for some commands:
      * Example: c[0] is the command: '/ban' 
-     * c[1], c[2] and c[3] are the arguments
+     * c[1], c[2] and c[3] are arguments
      */
     c = c.split(' '); 
     Command.parser(c[0], c[1], c[2], c[3]);
@@ -285,5 +289,4 @@ current_hour = getTime();
 });
 })
 
-User.sendReply('Connected !');
 User.sendReply('Welcome to nodeChat '+VERSION+' ! nodeChat is an open source application, you can fork me on <a href="https://github.com/P-Pariston/" target="_blank">github</a>.');
