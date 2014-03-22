@@ -20,18 +20,18 @@ var express = require('express')
 var io = io.listen(server);
 
 /*
-* App configuration (if necessary...)
+* App configuration
 */
 app.configure(function(){
 app.use(express.bodyParser());
-app.use(express.static(__dirname + '/static'));
+app.use(express.static(__dirname + 'static'));
 });
 
 /*
 * App routes
 */
-app.get('/', function (req, res) {
-res.end('This is a nodeChat server.')
+app.get('index.html', function (req, res) {
+
 });
 
 /*
@@ -140,7 +140,6 @@ Command.prototype.parser = function(c, c2, c3, c4){
              *       4 - Normal user | 3 - Voiced
              *       2 - Moderator   | 1 - Admin
              */
-            var collection = db.collection('nodechat');
             collection.findOne({username: c2.toLowerCase()}, function(err, result){
                 if(result == null){
                     collection.insert({username: c2.toLowerCase(), password: c3, rank:4}, function(err, result){
@@ -169,10 +168,18 @@ Command.prototype.parser = function(c, c2, c3, c4){
                     collection.findOne({username: c2.toLowerCase()}, function(err, result) {
                         if(result == null){
                             socket.emit('reply', 'User '+c2+' doesn\'t exist.');
+                            socket.emit('isLogged', '-1');
                         }else if(c3 == result.password){
-                            socket.emit('reply', 'Right password.');                            
+                            socket.emit('reply', 'Right password.');
+                            users.push(c2);
+						    socket.emit('addUsername', c2);
+						    socket.broadcast.emit('addUsername', c2); 
+						    socket.emit('userlist', users);
+						    socket.broadcast.emit('userlist', users);
+						    socket.emit('isLogged', '1');                            
                         }else{
-                            socket.emit('reply', 'Wrong password.');                            
+                            socket.emit('reply', 'Wrong id/password combinaison.'); 
+                            socket.emit('isLogged', '0');
                         }
                         db.close();
                     });
@@ -207,14 +214,8 @@ Post.prototype.displayMessages = function(messages){
 }
 Post.prototype.username = function(username){
     if(username.length >=11){
-        socket.emit('reply', 'Your name is too long. ( '+username.length+' chars, and max is 11)');
+        socket.emit('reply', 'Your name is too long. ( '+username.length+' chars, and max is 11). Please choose another name.');
         socket.emit('BadName', '1');
-    }else{
-    users.push(username);
-    socket.emit('addUsername', username);
-    socket.broadcast.emit('addUsername', username); 
-    socket.emit('userlist', users);
-    socket.broadcast.emit('userlist', users);
     }
 }
 Post.prototype.disconnect = function(pseudo){
