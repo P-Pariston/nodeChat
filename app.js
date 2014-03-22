@@ -197,16 +197,43 @@ Command.prototype.parser = function(c, c2, c3, c4){
 }
 /******** COMMAND SYSTEM (DEV) ************/
 
-Post.prototype.newPosts = function(username, mess, hour){
+Post.prototype.newPosts = function(username, mess, hour, pw){
     mess.pseudo = username;
     mess.hour = hour;
+    mess.pw = pw;
     //Max message length = 300 chars.
     if(mess.message.length >= 300){
         socket.emit('reply', 'Your message is too long. ( '+mess.message.length+' chars, and max is 300)');
     }else{
-        messages.push(mess);
-        socket.emit('getNewPosts', mess);   
-        socket.broadcast.emit('getNewPosts', mess);
+    /*
+     * Here is the checking of the identity.
+     * If someone has changed his name from the client,
+     * we can return to him an error.
+     */
+	if(typeof mess.pseudo != "undefined" && typeof mess.pw != "undefined"){
+	    MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+	        if(err) throw err;
+	        var collection = db.collection('nodechat');
+	        collection.findOne({username: mess.pseudo.toLowerCase()}, function(err, result) {
+	            if(result == null){
+	            	socket.emit('reply', 'Error');
+	                socket.emit('isLogged', '-1');
+	            }else if(mess.pw == result.password){
+			        messages.push(mess);
+			        socket.emit('getNewPosts', mess);   
+			        socket.broadcast.emit('getNewPosts', mess);           
+	            }else{
+	            	socket.emit('reply', 'Error');
+	                socket.emit('isLogged', '0');
+	            }
+	            db.close();
+	        });
+	      })
+	    }else{
+	        socket.emit('reply', 'Error');
+	        socket.emit('isLogged', '0');
+	    }
+        /**************************************/
     }
 }
 Post.prototype.displayMessages = function(messages){
@@ -253,7 +280,7 @@ current_hour = getTime();
         socket.emit('reply', 'You are connected as a guest and you cannot talk in this chat.')
     }
     else{
-    Post.newPosts(mess.pseudo, mess ,current_hour);     
+    Post.newPosts(mess.pseudo, mess, current_hour, mess.password);     
     }
 });
 })
