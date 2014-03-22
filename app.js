@@ -172,11 +172,11 @@ Command.prototype.parser = function(c, c2, c3, c4){
                         }else if(c3 == result.password){
                             socket.emit('reply', 'Right password.');
                             users.push(c2);
-						    socket.emit('addUsername', c2);
-						    socket.broadcast.emit('addUsername', c2); 
-						    socket.emit('userlist', users);
-						    socket.broadcast.emit('userlist', users);
-						    socket.emit('isLogged', '1');                            
+			    socket.emit('addUsername', c2);
+			    socket.broadcast.emit('addUsername', c2); 
+			    socket.emit('userlist', users);
+			    socket.broadcast.emit('userlist', users);
+			    socket.emit('isLogged', '1');                            
                         }else{
                             socket.emit('reply', 'Wrong id/password combinaison.'); 
                             socket.emit('isLogged', '0');
