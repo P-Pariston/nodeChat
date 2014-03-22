@@ -219,9 +219,9 @@ Post.prototype.newPosts = function(username, mess, hour, pw){
 	            	socket.emit('reply', 'Error');
 	                socket.emit('isLogged', '-1');
 	            }else if(mess.pw == result.password){
-			        messages.push(mess);
-			        socket.emit('getNewPosts', mess);   
-			        socket.broadcast.emit('getNewPosts', mess);           
+			messages.push(mess);
+			socket.emit('getNewPosts', mess);   
+			socket.broadcast.emit('getNewPosts', mess);           
 	            }else{
 	            	socket.emit('reply', 'Error');
 	                socket.emit('isLogged', '0');
