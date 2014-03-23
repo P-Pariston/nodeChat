@@ -1,8 +1,11 @@
 //Config file
 require('./config/config.js');
+require('colors');
 
 //nodeChat version
-console.log('nodeChat version: '+VERSION)
+console.log('|-----------------------------|'.yellow)
+console.log('|nodeChat version: '.yellow +VERSION.green+'      |'.yellow)
+console.log('|-----------------------------|'.yellow)
 
 //Dependencies
 var express = require('express')
@@ -109,7 +112,7 @@ var Command = (function(){
 });
 var Post = (function(){
 });
-Command.prototype.parser = function(c, c2, c3, c4){
+Command.prototype.parser = function(c, c2, c3, c4, by){
     console.log('DEBUG: Executing command '+c+' (eventually with these args:'+c2+', '+c3+', '+c4);
     switch (c) {
         case '/hour': 
@@ -124,11 +127,42 @@ Command.prototype.parser = function(c, c2, c3, c4){
          */
         socket.emit('reply', 'User '+c2+' was banned.');
         break;
-        case '/kick':
-        /*
-         *Code of '/kick' here
-         */
-        socket.emit('reply', 'User '+c2+' was kicked.');
+        case '/mute':
+        
+        /*********** Code of '/mute' here ***********/
+      if(typeof c2 != "undefined" && typeof c3 != "undefined" && !isNaN(c3)){
+        MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+         if(err) throw err;
+            var collection = db.collection('nodechat');
+            /*
+             *  c2 = username
+             *  c3 = minutes     
+             * 
+             */
+            //Checking if the rank of the user allows him to mute.
+            collection.findOne({username: by.toLowerCase()}, function(err, result){
+                if(result == null){
+                	socket.emit('reply', 'Bad request.');
+                    db.close();
+                }else if(result.rank <= 2){
+                	//Rank is OK, now we can mute
+                	collection.findOne({username: c2.toLowerCase()}, function(err, result){
+                		if(result == null){
+                			socket.emit('reply', 'User '+c2+'doesn\'t exist.');
+                		}else{
+                			socket.emit('reply', 'User '+c2+' was muted for '+c3+' minutes by '+by+'.');
+                    		socket.broadcast.emit('reply', 'User '+c2+' was muted for '+c3+' minutes by '+by+'.');
+                		}
+                	});
+                }else{
+                	socket.emit('reply', 'Access denied.');
+                }
+            });
+        });
+        }else{
+            socket.emit('reply', 'Invalid arguments.');
+        }
+         
         break;
         case '/register':
         if(typeof c2 != "undefined" && typeof c3 != "undefined"){
@@ -136,7 +170,7 @@ Command.prototype.parser = function(c, c2, c3, c4){
          if(err) throw err;
             var collection = db.collection('nodechat');
             /*
-             * Rank: 6 - Muted/banned| 5 - Guest
+             * Rank: 6 - Banned      | 5 - Muted
              *       4 - Normal user | 3 - Voiced
              *       2 - Moderator   | 1 - Admin
              */
@@ -170,13 +204,19 @@ Command.prototype.parser = function(c, c2, c3, c4){
                             socket.emit('reply', 'User '+c2+' doesn\'t exist.');
                             socket.emit('isLogged', '-1');
                         }else if(c3 == result.password){
+                        	//Pass is OK, now we'll check if the user is banned
+                        	if(result.rank >= 4){
                             socket.emit('reply', 'Right password.');
                             users.push(c2);
 						    socket.emit('addUsername', c2);
 						    socket.broadcast.emit('addUsername', c2); 
 						    socket.emit('userlist', users);
 						    socket.broadcast.emit('userlist', users);
-						    socket.emit('isLogged', '1');                            
+						    socket.emit('isLogged', '1');
+						    }else if(result.rank == 6){
+						    	socket.emit('reply', 'You are banned and you cannot come again. Please get in touch with an admin to be unbanned.');
+						    	socket.emit('isLogged', '0');
+						    }                            
                         }else{
                             socket.emit('reply', 'Wrong id/password combinaison.'); 
                             socket.emit('isLogged', '0');
@@ -278,7 +318,7 @@ current_hour = getTime();
      * c[1], c[2] and c[3] are arguments
      */
     c = c.split(' '); 
-    Command.parser(c[0], c[1], c[2], c[3]);
+    Command.parser(c[0], c[1], c[2], c[3], mess.pseudo);
     }else if(mess.pseudo.substring(0,5) === "Guest"){
         //Guests cannot talk
         socket.emit('reply', 'You are connected as a guest and you cannot talk in this chat.')
