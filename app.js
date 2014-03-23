@@ -148,10 +148,10 @@ Command.prototype.parser = function(c, c2, c3, c4, by){
                 	//Rank is OK, now we can mute
                 	collection.findOne({username: c2.toLowerCase()}, function(err, result){
                 		if(result == null){
-                			socket.emit('reply', 'User '+c2+'doesn\'t exist.');
+                		    socket.emit('reply', 'User '+c2+'doesn\'t exist.');
                 		}else{
-                			socket.emit('reply', 'User '+c2+' was muted for '+c3+' minutes by '+by+'.');
-                    		socket.broadcast.emit('reply', 'User '+c2+' was muted for '+c3+' minutes by '+by+'.');
+                		    socket.emit('reply', 'User '+c2+' was muted for '+c3+' minutes by '+by+'.');
+                    		    socket.broadcast.emit('reply', 'User '+c2+' was muted for '+c3+' minutes by '+by+'.');
                 		}
                 	});
                 }else{
@@ -206,17 +206,17 @@ Command.prototype.parser = function(c, c2, c3, c4, by){
                         }else if(c3 == result.password){
                         	//Pass is OK, now we'll check if the user is banned
                         	if(result.rank >= 4){
-                            socket.emit('reply', 'Right password.');
-                            users.push(c2);
-						    socket.emit('addUsername', c2);
-						    socket.broadcast.emit('addUsername', c2); 
-						    socket.emit('userlist', users);
-						    socket.broadcast.emit('userlist', users);
-						    socket.emit('isLogged', '1');
-						    }else if(result.rank == 6){
-						    	socket.emit('reply', 'You are banned and you cannot come again. Please get in touch with an admin to be unbanned.');
-						    	socket.emit('isLogged', '0');
-						    }                            
+	                            socket.emit('reply', 'Right password.');
+	                            users.push(c2);
+				    socket.emit('addUsername', c2);
+				    socket.broadcast.emit('addUsername', c2); 
+				    socket.emit('userlist', users);
+				    socket.broadcast.emit('userlist', users);
+				    socket.emit('isLogged', '1');
+				    }else if(result.rank == 6){
+				    socket.emit('reply', 'You are banned and you cannot come again. Please get in touch with an admin to be unbanned.');
+				    socket.emit('isLogged', '0');
+				    }                            
                         }else{
                             socket.emit('reply', 'Wrong id/password combinaison.'); 
                             socket.emit('isLogged', '0');
@@ -261,9 +261,9 @@ Post.prototype.newPosts = function(username, mess, hour, pw){
 	                socket.emit('isLogged', '-1');
 	                socket.emit('refresh', '1');
 	            }else if(mess.pw == result.password){
-			        messages.push(mess);
-			        socket.emit('getNewPosts', mess);   
-			        socket.broadcast.emit('getNewPosts', mess);           
+			messages.push(mess);
+			socket.emit('getNewPosts', mess);   
+			socket.broadcast.emit('getNewPosts', mess);           
 	            }else{
 	            	socket.emit('reply', 'Error');
 	                socket.emit('isLogged', '0');
