@@ -288,10 +288,10 @@ io.sockets.on('connection', function(socket) {
                             } else if (result.rank == 6) {
                                 socket.emit('reply', 'You are banned and you cannot come again. Please get in touch with an admin to be unbanned.');
                                 socket.emit('isLogged', '0');
-                            } /*else if (users.indexOf(c2) != '0' {
-                                socket.emit('reply', 'This user is already connected');
-                                socket.emit('isLogged', '0');
-                            }*/ else {
+                            } /*else if (the user is already connected) {
+                               *We can block the access to him (one connection per
+                               *account at the same time)
+                            }  */ else {
                                 socket.emit('reply', 'Something went wrong.');
                                 socket.emit('isLogged', '0');
                             }
