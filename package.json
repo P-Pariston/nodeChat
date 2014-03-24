@@ -5,7 +5,8 @@
     "dependencies": {
       "socket.io": "~0.9.6",
       "express": "3.0",
-      "mongodb": "~1.4"
+      "mongodb": "~1.4",
+      "colors": "0.6.2"
   },
   "engines": {
     "node": "0.10.x"
