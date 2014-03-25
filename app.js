@@ -128,9 +128,7 @@ io.sockets.on('connection', function(socket) {
             socket.emit('reply', 'User ' + c2 + ' was banned.');
             break;
         case '/mute':
-            if (typeof c2 != "undefined"
-            /* && typeof c3 != "undefined" && !isNaN(c3)*/
-            ) {
+            if (typeof c2 != "undefined" /* && typeof c3 != "undefined" && !isNaN(c3)*/) {
                 MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
                     if (err)
                         throw err;
