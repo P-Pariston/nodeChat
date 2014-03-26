@@ -194,7 +194,7 @@ io.sockets.on('connection', function(socket) {
                             socket.emit('reply', 'Bad request.');
                             db.close();
                         } else if (result.rank <= 2) {
-                            //Rank is OK, now we can mute
+                            //OK
                             collection.findOne({
                                 username: c2.toLowerCase()
                                 }, function(err, result) {
