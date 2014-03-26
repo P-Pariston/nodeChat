@@ -27,7 +27,7 @@ var io = io.listen(server);
  */
 app.configure(function() {
     app.use(express.bodyParser());
-    app.use(express.static(__dirname + ''));
+    app.use(express.static(__dirname + '/static'));
 });
 
 /*
