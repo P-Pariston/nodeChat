@@ -1,3 +1,11 @@
+/*
+ * commands.js
+ *
+ * This file contains all commands of the chat.
+ * You can add a command by just adding a 'case'.
+ * This file is required to run nodeChat.
+ * @license MIT license
+ */
 module.exports = function(c, c2, c3, c4, by) {
         console.log('DEBUG: Executing command ' + c + ' (eventually with these args:' + c2 + ', ' + c3 + ', ' + c4);
         switch (c) {
