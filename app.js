@@ -1,5 +1,5 @@
 //Config file
- require('./config/config.js');
+require('./config/config.js');
 require('colors');
 
 //nodeChat version
@@ -27,7 +27,7 @@ var io = io.listen(server);
  */
 app.configure(function() {
     app.use(express.bodyParser());
-    app.use(express.static(__dirname + '/static'));
+    app.use(express.static(__dirname + ''));
 });
 
 /*
@@ -122,13 +122,101 @@ io.sockets.on('connection', function(socket) {
             socket.emit('reply', 'nodeChat v' + VERSION);
             break;
         case '/ban':
-            /*
-             *Code of '/ban' here
-             */
+            if (typeof c2 != "undefined") {
+                MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+                    if (err)
+                        throw err;
+                    var collection = db.collection('nodechat');
+                    /*
+                     *  c2 = username
+                     */
+                    //Allowed to ban ?
+                    collection.findOne({
+                        username: by.toLowerCase()
+                        }, function(err, result) {
+                        if (result == null) {
+                            socket.emit('reply', 'Bad request.');
+                            db.close();
+                        } else if (result.rank <= 2) {
+                            //OK
+                            collection.findOne({
+                                username: c2.toLowerCase()
+                                }, function(err, result) {
+                                if (result == null) {
+                                    socket.emit('reply', 'User ' + c2 + ' doesn\'t exist.');
+                                } else {
+                                    collection.update({
+                                        username: c2.toLowerCase()
+                                        }, {
+                                        $set: {
+                                            rank: 6
+                                        }
+                                    }, function(err, result) {
+                                        socket.emit('reply', 'User ' + c2 + ' was banned by ' + by + '.');
+                                        socket.broadcast.emit('reply', 'User ' + c2 + ' was banned by ' + by + '.');
+                                        });
+                                }
+                            });
+                        } else {
+                            socket.emit('reply', 'Access denied.');
+                        }
+                    });
+                });
+            } else {
+                socket.emit('reply', 'Invalid arguments.');
+            }
+            break;
             socket.emit('reply', 'User ' + c2 + ' was banned.');
             break;
+            case '/unban':
+	            if (typeof c2 != "undefined") {
+	                MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
+	                    if (err)
+	                        throw err;
+	                    var collection = db.collection('nodechat');
+	                    /*
+	                     *  c2 = username
+	                     */
+	                    //Allowed to unban ?
+	                    collection.findOne({
+	                        username: by.toLowerCase()
+	                        }, function(err, result) {
+	                        if (result == null) {
+	                            socket.emit('reply', 'Bad request.');
+	                            db.close();
+	                        } else if (result.rank <= 2) {
+	                            //OK
+	                            collection.findOne({
+	                                username: c2.toLowerCase()
+	                                }, function(err, result) {
+	                                if (result == null) {
+	                                    socket.emit('reply', 'User ' + c2 + ' doesn\'t exist.');
+	                                } else {
+	                                    collection.update({
+	                                        username: c2.toLowerCase()
+	                                        }, {
+	                                        $set: {
+	                                            rank: 4
+	                                        }
+	                                    }, function(err, result) {
+	                                        socket.emit('reply', 'User ' + c2 + ' was unbanned by ' + by + '.');
+	                                        socket.broadcast.emit('reply', 'User ' + c2 + ' was unbanned by ' + by + '.');
+	                                        });
+	                                }
+	                            });
+	                        } else {
+	                            socket.emit('reply', 'Access denied.');
+	                        }
+	                    });
+	                });
+	            } else {
+	                socket.emit('reply', 'Invalid arguments.');
+	            }
+        break;
         case '/mute':
-            if (typeof c2 != "undefined" /* && typeof c3 != "undefined" && !isNaN(c3)*/) {
+            if (typeof c2 != "undefined"
+            /* && typeof c3 != "undefined" && !isNaN(c3)*/
+            ) {
                 MongoClient.connect('mongodb://127.0.0.1:27017/nodechat', function(err, db) {
                     if (err)
                         throw err;
@@ -150,7 +238,7 @@ io.sockets.on('connection', function(socket) {
                                 username: c2.toLowerCase()
                                 }, function(err, result) {
                                 if (result == null) {
-                                    socket.emit('reply', 'User ' + c2 + 'doesn\'t exist.');
+                                    socket.emit('reply', 'User ' + c2 + ' doesn\'t exist.');
                                 } else {
                                     collection.update({
                                         username: c2.toLowerCase()
@@ -194,11 +282,12 @@ io.sockets.on('connection', function(socket) {
                             socket.emit('reply', 'Bad request.');
                             db.close();
                         } else if (result.rank <= 2) {
-                            //OK
+                            //Rank is OK, now we can mute
                             collection.findOne({
                                 username: c2.toLowerCase()
                                 }, function(err, result) {
                                 if (result == null) {
+                        			//There's no user to mute
                                     socket.emit('reply', 'User ' + c2 + 'doesn\'t exist.');
                                 } else {
                                     collection.update({
@@ -282,10 +371,9 @@ io.sockets.on('connection', function(socket) {
                                 socket.emit('userlist', users);
                                 socket.broadcast.emit('userlist', users);
                                 socket.emit('isLogged', '1');
-                                socket.emit('reply', users.indexOf(c2));
                             } else if (result.rank == 6) {
                                 socket.emit('reply', 'You are banned and you cannot come again. Please get in touch with an admin to be unbanned.');
-                                socket.emit('isLogged', '0');
+                                socket.emit('isLogged', '2');
                             } /*else if (the user is already connected) {
                                *We can block the access to him (one connection per
                                *account at the same time)
@@ -342,7 +430,9 @@ io.sockets.on('connection', function(socket) {
                         } else if (mess.pw == result.password) {
                         if (result.rank == '5') {
                             socket.emit('reply', 'You are muted and you cannot talk in this chat.')
-                            } else {
+                            } else if(result.rank == '6'){
+                            	socket.emit('isLogged', '2');
+                            }else {
                             messages.push(mess);
                             socket.emit('getNewPosts', mess);
                             socket.broadcast.emit('getNewPosts', mess);
