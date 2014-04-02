@@ -1,5 +1,13 @@
+/*
+ * Main file
+ * This is the main nodeChat app and the file you should
+ * be running to start the server if you're using it normally.
+ * 
+ * @license MIT license
+ */
+
 //Config file
- require('./config/config.js');
+require('./config/config.js');
 require('colors');
 
 //nodeChat version
