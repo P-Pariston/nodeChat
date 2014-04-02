@@ -117,7 +117,7 @@ io.sockets.on('connection', function(socket) {
     /******** COMMAND SYSTEM (DEV) ************/
     var Command = (function() {});
     var Post = (function() {});
-    Command.prototype.parser= require('commands.js')
+    Command.prototype.parser= require('./commands.js')
     
 
     Post.prototype.newPosts = function(username, mess, hour, pw) {
