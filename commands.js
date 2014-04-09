@@ -6,7 +6,11 @@
  * This file is required to run nodeChat.
  * @license MIT license
  */
-module.exports = function(c, c2, c3, c4, by) {
+
+MongoClient = require('mongodb').MongoClient;
+io = require('socket.io');
+
+module.exports = function(c, c2, c3, c4, by, socket, users) {
         console.log('DEBUG: Executing command ' + c + ' (eventually with these args:' + c2 + ', ' + c3 + ', ' + c4);
         switch (c) {
         case '/users':
