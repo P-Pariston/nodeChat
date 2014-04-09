@@ -212,7 +212,7 @@ io.sockets.on('connection', function(socket) {
                  * /ban user1, reason)
                  */
             c = c.split(' ');
-            Command.parser(c[0], c[1], c[2], c[3], mess.pseudo);
+            Command.parser(c[0], c[1], c[2], c[3], mess.pseudo, socket, users);
         } else {
             Post.newPosts(mess.pseudo, mess, current_hour, mess.password);
         }
