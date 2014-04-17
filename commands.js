@@ -11,7 +11,7 @@ MongoClient = require('mongodb').MongoClient;
 io = require('socket.io');
 
 module.exports = function(c, c2, c3, c4, by, socket, users) {
-        console.log('DEBUG: Executing command ' + c + ' (eventually with these args:' + c2 + ', ' + c3 + ', ' + c4);
+        console.log('DEBUG: Executing command ' + c + ' (possibly with these args:' + c2 + ', ' + c3 + ', ' + c4);
         switch (c) {
         case '/users':
             socket.emit('reply', users);
