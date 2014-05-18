@@ -39,4 +39,4 @@ nodeChat's server is distributed under the terms of the MIT License.
 Credits
 =======
 
-DAOUSSI Kassem - development, design.
+Keb - development, design.
